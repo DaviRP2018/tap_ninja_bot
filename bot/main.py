@@ -10,27 +10,46 @@ COOLDOWN_BEFORE_ASCENDING = 300  # seconds
 
 class Main:
     def __init__(self):
+        self.last_firefly_position_color = [
+            (255, 255, 255),
+            (255, 255, 255),
+            (255, 255, 255),
+            (255, 255, 255),
+            (255, 255, 255),
+            (255, 255, 255),
+        ]
         print("Starting in 3 seconds...")
         time.sleep(3)
 
         with open("settings/calibration.json") as json_file:
             self.calibration = json.load(json_file)
 
-    def get_color(self, json_key):
-        """Return a list containing the RGB of a given position"""
+    @staticmethod
+    def get_rgb(x, y):
         dc = windll.user32.GetDC(0)
-        rgb = windll.gdi32.GetPixel(
-            dc,
-            self.calibration[json_key][0][0],
-            self.calibration[json_key][0][1],
-        )
+        rgb = windll.gdi32.GetPixel(dc, x, y)
         r = rgb & 0xFF
         g = (rgb >> 8) & 0xFF
         b = (rgb >> 16) & 0xFF
         return [r, g, b]
 
-    def click(self, json_key):
+    def get_color(self, json_key):
+        """Return a list containing the RGB of a given position"""
+        r, g, b = self.get_rgb(
+            self.calibration[json_key][0][0],
+            self.calibration[json_key][0][1],
+        )
+        return [r, g, b]
+
+    @staticmethod
+    def raw_click(x, y):
         pyautogui.click(
+            x=x,
+            y=y,
+        )
+
+    def click(self, json_key):
+        self.raw_click(
             x=self.calibration[json_key][0][0],
             y=self.calibration[json_key][0][1],
         )
@@ -45,17 +64,31 @@ class Main:
             raise KeyboardInterrupt
 
     def check_firefly(self):
-        r, g, b = self.get_color("firefly_center")
+        x = self.calibration["firefly_center"][0][0]
+        y = self.calibration["firefly_center"][0][1]
+        y_increment = y // 10
+        for i in range(0, 6):
+            if i < 3:
+                new_y = y - y_increment
+            elif i == 3:
+                new_y = y
+            else:
+                new_y = y + y_increment
 
-        if any(
-            [
-                r == self.calibration["firefly_center"][1][0],
-                g == self.calibration["firefly_center"][1][1],
-                b == self.calibration["firefly_center"][1][2],
-            ]
-        ):
-            self.click("firefly_center")
-            print("aaaaaaaaaaaaaaaaaaa")
+            r, g, b = self.get_rgb(x, new_y)
+
+            red_diff = abs(r - self.last_firefly_position_color[i][0])
+            green_diff = abs(g - self.last_firefly_position_color[i][1])
+            blue_diff = abs(b - self.last_firefly_position_color[i][2])
+            if any(
+                [
+                    red_diff > r * 1.5,
+                    green_diff > g * 1.5,
+                    blue_diff > b * 1.5,
+                ]
+            ):
+                self.raw_click(x, new_y)
+            self.last_firefly_position_color[i] = (r, g, b)
 
     def keep_doing_something(self, action: str, seconds: int):
         match action:

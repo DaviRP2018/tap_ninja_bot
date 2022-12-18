@@ -34,7 +34,7 @@ class Notion:
             "is_energy_enabled", "Pick the energy enabled yellow border"
         )
         self.set_calibrate_value(
-            "firefly_center", "Press 'F' when the vaga-lume is in the center"
+            "firefly_center", "Press 'F' when the firefly is in the center"
         )
 
         # Buildings
@@ -74,5 +74,12 @@ class Notion:
         with open("settings/calibration.json", "w") as json_file:
             self.set_calibrate_value(
                 "is_energy_enabled", "Pick the energy enabled yellow border"
+            )
+            json.dump(self.calibration, json_file)
+
+    def calibrate_firefly(self):
+        with open("settings/calibration.json", "w") as json_file:
+            self.set_calibrate_value(
+                "firefly_center", "Press 'F' when the firefly is in the center"
             )
             json.dump(self.calibration, json_file)

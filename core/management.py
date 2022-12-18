@@ -32,6 +32,9 @@ class ManagementUtility:
             case "ce":
                 notion = Notion()
                 notion.calibrate_energy()
+            case "cf":
+                notion = Notion()
+                notion.calibrate_firefly()
             case "sc":
                 show_color()
             case "sp":
