@@ -44,6 +44,19 @@ class Main:
         if keyboard.is_pressed("k"):
             raise KeyboardInterrupt
 
+    def check_firefly(self):
+        r, g, b = self.get_color("firefly_center")
+
+        if any(
+            [
+                r == self.calibration["firefly_center"][1][0],
+                g == self.calibration["firefly_center"][1][1],
+                b == self.calibration["firefly_center"][1][2],
+            ]
+        ):
+            self.click("firefly_center")
+            print("aaaaaaaaaaaaaaaaaaa")
+
     def keep_doing_something(self, action: str, seconds: int):
         match action:
             case "building":
@@ -53,13 +66,14 @@ class Main:
                 btn = "research_buy_all"
                 self.click("research_tab")
             case "clicking":
-                btn = "vaga_lume_center"
+                btn = "firefly_center"
             case _:
                 return
 
         start = time.time()
         while time.time() - start < seconds:
             self.check_pause_quit()
+            self.check_firefly()
             self.click(btn)
             time.sleep(0.1)
 
@@ -82,6 +96,7 @@ class Main:
                 while time.time() - start < COOLDOWN_BEFORE_ASCENDING:
                     print(time.time() - start)
                     self.check_pause_quit()
+                    self.check_firefly()
                     time.sleep(0.5)
                     self.keep_doing_something("building", 5)
                     time.sleep(0.5)
@@ -89,10 +104,10 @@ class Main:
 
                     rgb = self.get_color("is_energy_enabled")
                     r = rgb[0]
-                    energy_red_color = self.calibration["is_energy_enabled"][
-                        1
-                    ][0]
-                    while r != energy_red_color:
+                    energy_disabled_red_color = self.calibration[
+                        "is_energy_enabled"
+                    ][1][0]
+                    while r == energy_disabled_red_color:
                         self.keep_doing_something("clicking", 5)
                         rgb = self.get_color("is_energy_enabled")
                         r = rgb[0]

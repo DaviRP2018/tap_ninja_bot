@@ -1,7 +1,8 @@
 import sys
 
 from bot.main import Main
-from utils.utils import calibrate, show_color, show_position
+from bot.notion import Notion
+from utils.utils import show_color, show_position
 
 
 class ManagementUtility:
@@ -21,19 +22,22 @@ class ManagementUtility:
         except IndexError:
             subcommand = "help"  # Display help if no arguments were given.
 
-        if subcommand == "runbot":
-            bot = Main()
-            bot.start_bot()
-            pass
-        elif subcommand == "cee":
-            calibrate()
-        elif subcommand == "mcc":
-            show_color()
-        elif subcommand == "mcp":
-            show_position()
-
-        else:
-            sys.stdout.write("Command not found")
+        match subcommand:
+            case "runbot":
+                bot = Main()
+                bot.start_bot()
+            case "cee":
+                notion = Notion()
+                notion.calibrate()
+            case "ce":
+                notion = Notion()
+                notion.calibrate_energy()
+            case "sc":
+                show_color()
+            case "sp":
+                show_position()
+            case _:
+                sys.stdout.write("Command not found")
 
 
 def execute_from_command_line(argv=None):
