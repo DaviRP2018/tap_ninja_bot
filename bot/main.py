@@ -1,6 +1,7 @@
 import json
 import time
 from ctypes import windll
+from typing import List
 
 import keyboard
 import pyautogui
@@ -25,7 +26,8 @@ class Main:
             self.calibration = json.load(json_file)
 
     @staticmethod
-    def get_rgb(x, y):
+    def get_rgb(x: int, y: int) -> List[int]:
+        """Get RGB based on position"""
         dc = windll.user32.GetDC(0)
         rgb = windll.gdi32.GetPixel(dc, x, y)
         r = rgb & 0xFF
@@ -33,8 +35,8 @@ class Main:
         b = (rgb >> 16) & 0xFF
         return [r, g, b]
 
-    def get_color(self, json_key):
-        """Return a list containing the RGB of a given position"""
+    def get_color(self, json_key: str) -> List[int]:
+        """Get RGB based on json key"""
         r, g, b = self.get_rgb(
             self.calibration[json_key][0][0],
             self.calibration[json_key][0][1],
@@ -42,20 +44,27 @@ class Main:
         return [r, g, b]
 
     @staticmethod
-    def raw_click(x, y):
+    def raw_click(x: int, y: int) -> None:
+        """Click based on position"""
         pyautogui.click(
             x=x,
             y=y,
         )
 
-    def click(self, json_key):
+    def click(self, json_key: str) -> None:
+        """
+        Click based on json key
+
+        :param json_key: The json key
+        """
         self.raw_click(
             x=self.calibration[json_key][0][0],
             y=self.calibration[json_key][0][1],
         )
 
     @staticmethod
-    def check_pause_quit():
+    def check_pause_quit() -> None:
+        """Checks if user pressed P or K"""
         if keyboard.is_pressed("p"):
             print("Bot stopped, press R to resume")
             keyboard.wait("r")
@@ -63,7 +72,14 @@ class Main:
         if keyboard.is_pressed("k"):
             raise KeyboardInterrupt
 
-    def check_firefly(self):
+    def check_firefly(self) -> None:
+        """
+        Check if a firefly passed by its positions
+        There will be 5 position to check, forming a column based on X position
+
+        If any color of these positions changes more than 50% it will
+        identify a firefly is passing by
+        """
         x = self.calibration["firefly_center"][0][0]
         y = self.calibration["firefly_center"][0][1]
         y_increment = y // 10
@@ -90,7 +106,13 @@ class Main:
                 self.raw_click(x, new_y)
             self.last_firefly_position_color[i] = (r, g, b)
 
-    def keep_doing_something(self, action: str, seconds: int):
+    def keep_doing_something(self, action: str, seconds: int) -> None:
+        """
+
+        :param action: The action to keep doing
+        :param seconds: How many seconds it will keep doing the action
+        :return: None
+        """
         match action:
             case "building":
                 btn = "building_buy_all"
@@ -110,7 +132,8 @@ class Main:
             self.click(btn)
             time.sleep(0.1)
 
-    def ascend(self):
+    def ascend(self) -> None:
+        """Method to ascend"""
         time.sleep(0.5)
         self.click("elixir_tab")
         time.sleep(0.5)
@@ -118,7 +141,8 @@ class Main:
         time.sleep(0.5)
         self.click("elixir_ascend_confirmation")
 
-    def start_bot(self):
+    def start_bot(self) -> None:
+        """Main entry function to run the bot"""
         print("Press 'K' to quit.")
         print("Press 'P' to pause.")
 
