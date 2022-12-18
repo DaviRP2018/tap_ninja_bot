@@ -102,13 +102,3 @@ def calibrate():
 
         json.dump(calibration, json_file)
         print("Saved")
-
-
-def get_color(x, y):
-    """Return a list containing the RGB of a given position"""
-    dc = windll.user32.GetDC(0)
-    rgb = windll.gdi32.GetPixel(dc, x, y)
-    r = rgb & 0xFF
-    g = (rgb >> 8) & 0xFF
-    b = (rgb >> 16) & 0xFF
-    return [r, g, b]
