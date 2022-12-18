@@ -1,6 +1,4 @@
-#!/usr/bin/env python
 """Bot command-line utility for administrative tasks."""
-import os
 import sys
 
 from core.management import execute_from_command_line
