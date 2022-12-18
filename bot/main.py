@@ -41,7 +41,7 @@ class Main:
             print("Bot stopped, press R to resume")
             keyboard.wait("r")
             print("Bot resumed")
-        if keyboard.is_pressed("q"):
+        if keyboard.is_pressed("k"):
             raise KeyboardInterrupt
 
     def keep_doing_something(self, action: str, seconds: int):
@@ -64,17 +64,16 @@ class Main:
             time.sleep(0.1)
 
     def ascend(self):
-        time.sleep(1)
+        time.sleep(0.5)
         self.click("elixir_tab")
-        time.sleep(1)
+        time.sleep(0.5)
         self.click("elixir_ascend")
-        time.sleep(1)
+        time.sleep(0.5)
         self.click("elixir_ascend_confirmation")
 
     def start_bot(self):
-        print("Press Ctrl-C to quit.")
-        print("Hold P to pause.")
-        print("Hold I to get info.")
+        print("Press 'K' to quit.")
+        print("Press 'P' to pause.")
 
         try:
             while True:
@@ -90,7 +89,10 @@ class Main:
 
                     rgb = self.get_color("is_energy_enabled")
                     r = rgb[0]
-                    while r != 226:
+                    energy_red_color = self.calibration["is_energy_enabled"][
+                        1
+                    ][0]
+                    while r != energy_red_color:
                         self.keep_doing_something("clicking", 5)
                         rgb = self.get_color("is_energy_enabled")
                         r = rgb[0]
