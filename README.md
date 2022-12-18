@@ -1,5 +1,5 @@
-# clicker-heroes-bot
-Visual bot for clicker heroes. I made it in my spare time since the game is played alone, right, and now totally alone.
+# tap-ninja-bot
+Visual bot for Tap Ninja. I made it in my spare time since the game is played alone, right, and now totally alone.
 
 ## Works ONLY for Windows
 
@@ -17,18 +17,12 @@ Steps:
 * install requirements
   * `pip install -r requirements.txt`
 * Calibrate buttons positions and stuff (Press 'F' to set). Follow the steps provided
-  * `python manage.py calibratepositions`
-  * You have to open clicker heroes and move your mouse to where you think it's a good spot to pick up the gold, there will be 3 positions for this
-  * Then move to where the power buttons are
-  * Then move to some general stuff
-* Calibrate color of some buttons when they are clickable
-  * `python manage.py calibratecolors`
+  * `python manage.py cee`
+  * You have to open Tap Ninja
+  * Then move to where it tells you
 * Run the bot with
   * `python manage.py runbot`
 
 You can see the color or positions with
 * `python manage.py mcc` color
 * `python manage.py mcp` position
-
-
-Probably the bot will be broken :( due to resolution differences or size of the screen 
