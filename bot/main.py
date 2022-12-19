@@ -5,8 +5,25 @@ from typing import List
 
 import keyboard
 import pyautogui
+import pytesseract
+from PIL import ImageGrab
 
 COOLDOWN_BEFORE_ASCENDING = 300  # seconds
+
+
+def img_to_string():
+    # Path of tesseract executable
+    pytesseract.pytesseract.tesseract_cmd = (
+        "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract"
+    )
+    # ImageGrab-To capture the screen image in a loop.
+    # Bbox used to capture a specific area.
+    cap = ImageGrab.grab(bbox=(2370, 200, 2540, 250))
+
+    # Converted the image to monochrome for it to be easily
+    # read by the OCR and obtained the output String.
+    tesstr = pytesseract.image_to_string(cap, lang="eng")
+    return tesstr
 
 
 class Main:
@@ -19,6 +36,10 @@ class Main:
             (255, 255, 255),
             (255, 255, 255),
         ]
+        self.last_elixir_detected = 0
+        self.elixir_list = []
+        self.ascend_count = 0
+
         print("Starting in 3 seconds...")
         time.sleep(3)
 
@@ -61,6 +82,23 @@ class Main:
             x=self.calibration[json_key][0][0],
             y=self.calibration[json_key][0][1],
         )
+
+    def watch(self):
+        self.check_pause_quit()
+        self.check_firefly()
+        self.check_elixir()
+
+    def check_elixir(self) -> None:
+        screen_str = img_to_string()
+        try:
+            split_str = screen_str.split(".")
+            number_str = f"{split_str[0]}.{split_str[1][:2]}"
+            elixir = float(number_str)
+            if elixir > self.last_elixir_detected:
+                self.last_elixir_detected = elixir
+                print(f"Saving elixir: {self.last_elixir_detected}")
+        except (ValueError, IndexError):
+            pass
 
     @staticmethod
     def check_pause_quit() -> None:
@@ -127,13 +165,17 @@ class Main:
 
         start = time.time()
         while time.time() - start < seconds:
-            self.check_pause_quit()
-            self.check_firefly()
+            self.watch()
             self.click(btn)
             time.sleep(0.1)
 
     def ascend(self) -> None:
         """Method to ascend"""
+        self.ascend_count += 1
+        self.elixir_list.append(self.last_elixir_detected)
+        elixir_sum = sum(self.elixir_list)
+        print(f"Average elixir: {elixir_sum / self.ascend_count}")
+        print(f"Total elixir: {elixir_sum}")
         time.sleep(0.5)
         self.click("elixir_tab")
         time.sleep(0.5)
@@ -148,12 +190,14 @@ class Main:
 
         try:
             while True:
+                # Ascend
+                self.ascend()
+
                 start = time.time()
                 time.sleep(0.5)
                 while time.time() - start < COOLDOWN_BEFORE_ASCENDING:
                     print(time.time() - start)
-                    self.check_pause_quit()
-                    self.check_firefly()
+                    self.watch()
                     time.sleep(0.5)
                     self.keep_doing_something("building", 5)
                     time.sleep(0.5)
@@ -161,16 +205,10 @@ class Main:
 
                     rgb = self.get_color("is_energy_enabled")
                     r = rgb[0]
-                    energy_disabled_red_color = self.calibration[
-                        "is_energy_enabled"
-                    ][1][0]
-                    while r == energy_disabled_red_color:
+                    while r < 100:
                         self.keep_doing_something("clicking", 5)
                         rgb = self.get_color("is_energy_enabled")
                         r = rgb[0]
-
-                # Ascend
-                self.ascend()
         except KeyboardInterrupt:
             print("\n")
             print("Exiting...")

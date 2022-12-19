@@ -1,5 +1,7 @@
-keyboard~=0.13.4
-PyAutoGUI~=0.9.48
+keyboard
+PyAutoGUI
+Pillow
+pytesseract
 
 # Dev
 pre-commit
