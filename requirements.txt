@@ -1,7 +1,5 @@
 keyboard
 PyAutoGUI
-Pillow
-pytesseract
 
 # Dev
 pre-commit
