@@ -26,6 +26,9 @@ class ManagementUtility:
             case "runbot":
                 bot = Main()
                 bot.start_bot()
+            case "cha":
+                bot = Main()
+                bot.chalenge()
             case "cee":
                 notion = Notion()
                 notion.calibrate()
@@ -35,6 +38,9 @@ class ManagementUtility:
             case "cf":
                 notion = Notion()
                 notion.calibrate_firefly()
+            case "cc":
+                notion = Notion()
+                notion.calibrate_chalenge()
             case "sc":
                 show_color()
             case "sp":

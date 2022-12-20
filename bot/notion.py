@@ -10,6 +10,8 @@ class Notion:
     def __init__(self):
         with open("settings/calibration_template.json") as json_file:
             self.calibration = json.load(json_file)
+        with open("settings/chalenge_template.json") as json_file:
+            self.chalenge = json.load(json_file)
 
     @staticmethod
     def get_position_n_color(key):
@@ -83,3 +85,9 @@ class Notion:
                 "firefly_center", "Press 'F' when the firefly is in the center"
             )
             json.dump(self.calibration, json_file)
+
+    def calibrate_chalenge(self):
+        with open("settings/chalenge.json", "w") as json_file:
+            print("Pick right in front the ninja")
+            self.chalenge["front"] = self.get_position_n_color(key="f")
+            json.dump(self.chalenge, json_file)
