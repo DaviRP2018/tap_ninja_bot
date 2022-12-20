@@ -18,6 +18,7 @@ class Main:
             (255, 255, 255),
             (255, 255, 255),
             (255, 255, 255),
+            (255, 255, 255),
         ]
         self.ascend_count = 0
 
@@ -97,20 +98,31 @@ class Main:
         """
         x = self.calibration["firefly_center"][0][0]
         y = self.calibration["firefly_center"][0][1]
-        y_increment = y // 3
-        for i in range(0, 6):
-            if i < 3:
-                new_y = y - y_increment
-            elif i == 3:
-                new_y = y
-            else:
-                new_y = y + y_increment
-
+        y_increment = y // 5
+        # import datetime
+        # if datetime.datetime.now().second == 0:
+        #     print("self.last_firefly_position_color",
+        #           self.last_firefly_position_color)
+        new_ys = [
+            y - (3 * y_increment),
+            y - (2 * y_increment),
+            y - y_increment,
+            y,
+            y + y_increment,
+            y + (2 * y_increment),
+            y + (3 * y_increment),
+        ]
+        for i, new_y in enumerate(new_ys):
             r, g, b = self.get_rgb(x, new_y)
 
             red_diff = abs(r - self.last_firefly_position_color[i][0])
             green_diff = abs(g - self.last_firefly_position_color[i][1])
             blue_diff = abs(b - self.last_firefly_position_color[i][2])
+            # if datetime.datetime.now().second == 0:
+            #     print("new_y", new_y)
+            #     print("red_diff", red_diff)
+            #     print("green_diff", green_diff)
+            #     print("blue_diff", blue_diff)
             if any(
                 [
                     red_diff > 10,
