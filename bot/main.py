@@ -6,11 +6,11 @@ from typing import List, Tuple
 import keyboard
 import pyautogui
 
-COOLDOWN_BEFORE_ASCENDING = 300  # seconds
+DEFAULT_COOLDOWN_BEFORE_ASCENDING = 300  # seconds
 
 
 class Main:
-    def __init__(self):
+    def __init__(self, ascension_cooldown):
         self.last_firefly_position_color = [
             (255, 255, 255),
             (255, 255, 255),
@@ -21,6 +21,8 @@ class Main:
             (255, 255, 255),
         ]
         self.ascend_count = 0
+        self.ascension_cooldown = ascension_cooldown
+        self.dc = 0
 
         print("Starting in 3 seconds...")
         time.sleep(3)
@@ -30,11 +32,16 @@ class Main:
         with open("settings/chalenge.json") as json_file:
             self.chalenge_file = json.load(json_file)
 
-    @staticmethod
-    def get_rgb(x: int, y: int) -> List[int]:
+    def get_rgb(self, x: int, y: int) -> List[int]:
         """Get RGB based on position"""
-        dc = windll.user32.GetDC(0)
-        rgb = windll.gdi32.GetPixel(dc, x, y)
+        dc_ready = windll.user32.GetDC(0)
+        self.dc = dc_ready or self.dc  # This should at least fix? the error
+        # with this dawg. For some reason this only returns 0 after a period
+        # of time
+        if not dc_ready:
+            print(f"dc_ready is {dc_ready}")
+            print(f"self.dc is now {self.dc}")
+        rgb = windll.gdi32.GetPixel(self.dc, x, y)
         r = rgb & 0xFF
         g = (rgb >> 8) & 0xFF
         b = (rgb >> 16) & 0xFF
@@ -180,7 +187,7 @@ class Main:
 
                 start = time.time()
                 time.sleep(0.5)
-                while time.time() - start < COOLDOWN_BEFORE_ASCENDING:
+                while time.time() - start < self.ascension_cooldown:
                     print(time.time() - start)
                     self.watch()
                     time.sleep(0.5)
