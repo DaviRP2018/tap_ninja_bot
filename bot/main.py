@@ -11,15 +11,6 @@ DEFAULT_COOLDOWN_BEFORE_ASCENDING = 300  # seconds
 
 class Main:
     def __init__(self, ascension_cooldown):
-        self.last_firefly_position_color = [
-            (255, 255, 255),
-            (255, 255, 255),
-            (255, 255, 255),
-            (255, 255, 255),
-            (255, 255, 255),
-            (255, 255, 255),
-            (255, 255, 255),
-        ]
         self.ascend_count = 0
         self.ascension_cooldown = ascension_cooldown
         self.dc = 0
@@ -97,19 +88,11 @@ class Main:
 
     def check_firefly(self) -> None:
         """
-        Check if a firefly passed by its positions
-        There will be 5 position to check, forming a column based on X position
-
-        If any color of these positions changes more than 50% it will
-        identify a firefly is passing by
+        Click 7 position in the center
         """
         x = self.calibration["firefly_center"][0][0]
         y = self.calibration["firefly_center"][0][1]
         y_increment = y // 5
-        # import datetime
-        # if datetime.datetime.now().second == 0:
-        #     print("self.last_firefly_position_color",
-        #           self.last_firefly_position_color)
         new_ys = [
             y - (3 * y_increment),
             y - (2 * y_increment),
@@ -119,26 +102,8 @@ class Main:
             y + (2 * y_increment),
             y + (3 * y_increment),
         ]
-        for i, new_y in enumerate(new_ys):
-            r, g, b = self.get_rgb(x, new_y)
-
-            red_diff = abs(r - self.last_firefly_position_color[i][0])
-            green_diff = abs(g - self.last_firefly_position_color[i][1])
-            blue_diff = abs(b - self.last_firefly_position_color[i][2])
-            # if datetime.datetime.now().second == 0:
-            #     print("new_y", new_y)
-            #     print("red_diff", red_diff)
-            #     print("green_diff", green_diff)
-            #     print("blue_diff", blue_diff)
-            if any(
-                [
-                    red_diff > 10,
-                    green_diff > 10,
-                    blue_diff > 10,
-                ]
-            ):
-                self.raw_click(x, new_y)
-            self.last_firefly_position_color[i] = (r, g, b)
+        for new_y in new_ys:
+            self.raw_click(x, new_y)
 
     def keep_doing_something(self, action: str, seconds: int) -> None:
         """
@@ -194,17 +159,14 @@ class Main:
                     self.keep_doing_something("building", 5)
                     time.sleep(0.5)
                     self.keep_doing_something("research", 5)
-
-                    rgb = self.get_color("is_energy_enabled")
-                    r = rgb[0]
-                    while r < 100:
-                        self.keep_doing_something("clicking", 5)
-                        rgb = self.get_color("is_energy_enabled")
-                        r = rgb[0]
+                    keyboard.send("q")
+                    keyboard.send("w")
         except KeyboardInterrupt:
             print("\n")
             print("Exiting...")
 
+
+class Chalenge:
     def detect_color_change(self, last_color, x, y) -> Tuple[List[int], bool]:
         print("last_color", last_color)
         r, g, b = self.get_rgb(x, y)
