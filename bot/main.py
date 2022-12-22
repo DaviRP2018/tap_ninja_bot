@@ -10,10 +10,13 @@ DEFAULT_COOLDOWN_BEFORE_ASCENDING = 300  # seconds
 
 
 class Main:
-    def __init__(self, ascension_cooldown):
+    def __init__(self, ascension_cooldown, ascend):
         self.ascend_count = 0
         self.ascension_cooldown = ascension_cooldown
+        self.ascend = ascend
         self.dc = 0
+
+        self.show_configs()
 
         print("Starting in 3 seconds...")
         time.sleep(3)
@@ -22,6 +25,10 @@ class Main:
             self.calibration = json.load(json_file)
         with open("settings/chalenge.json") as json_file:
             self.chalenge_file = json.load(json_file)
+
+    def show_configs(self):
+        print("ascension_cooldown:", self.ascension_cooldown)
+        print("ascend:", self.ascend)
 
     def get_rgb(self, x: int, y: int) -> List[int]:
         """Get RGB based on position"""
@@ -112,23 +119,25 @@ class Main:
         :param seconds: How many seconds it will keep doing the action
         :return: None
         """
+        start = time.time()
         match action:
             case "building":
-                btn = "building_buy_all"
                 self.click("building_tab")
+                while time.time() - start < seconds:
+                    self.watch()
+                    self.click("building_buy_all")
             case "research":
-                btn = "research_buy_all"
                 self.click("research_tab")
+                while time.time() - start < seconds:
+                    self.watch()
+                    self.click("research_buy_all_1")
+                    self.click("research_buy_all_2")
             case "clicking":
-                btn = "firefly_center"
+                while time.time() - start < seconds:
+                    self.watch()
+                    self.click("firefly_center")
             case _:
                 return
-
-        start = time.time()
-        while time.time() - start < seconds:
-            self.watch()
-            self.click(btn)
-            time.sleep(0.1)
 
     def ascend(self) -> None:
         """Method to ascend"""
@@ -147,17 +156,16 @@ class Main:
 
         try:
             while True:
-                # Ascend
-                self.ascend()
+                if self.ascend:
+                    # Ascend
+                    self.ascend()
 
                 start = time.time()
                 time.sleep(0.5)
                 while time.time() - start < self.ascension_cooldown:
                     print(time.time() - start)
                     self.watch()
-                    time.sleep(0.5)
                     self.keep_doing_something("building", 5)
-                    time.sleep(0.5)
                     self.keep_doing_something("research", 5)
                     keyboard.send("q")
                     keyboard.send("w")

@@ -1,6 +1,6 @@
 import sys
 
-from bot.main import DEFAULT_COOLDOWN_BEFORE_ASCENDING, Main
+from bot.main import DEFAULT_COOLDOWN_BEFORE_ASCENDING, Chalenge, Main
 from bot.notion import Notion
 from utils.utils import show_color, show_position
 
@@ -27,12 +27,17 @@ class ManagementUtility:
         except (IndexError, ValueError):
             ascension_cooldown = DEFAULT_COOLDOWN_BEFORE_ASCENDING
 
+        try:
+            ascend = bool(self.argv[3])
+        except (IndexError, ValueError):
+            ascend = False
+
         match subcommand:
             case "runbot":
-                bot = Main(ascension_cooldown)
+                bot = Main(ascension_cooldown, ascend)
                 bot.start_bot()
             case "cha":
-                bot = Main(ascension_cooldown)
+                bot = Chalenge()
                 bot.chalenge()
             case "cee":
                 notion = Notion()
