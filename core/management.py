@@ -28,13 +28,13 @@ class ManagementUtility:
             ascension_cooldown = DEFAULT_COOLDOWN_BEFORE_ASCENDING
 
         try:
-            ascend = bool(self.argv[3])
+            ascend_enabled = bool(self.argv[3])
         except (IndexError, ValueError):
-            ascend = False
+            ascend_enabled = False
 
         match subcommand:
             case "runbot":
-                bot = Main(ascension_cooldown, ascend)
+                bot = Main(ascension_cooldown, ascend_enabled)
                 bot.start_bot()
             case "cha":
                 bot = Chalenge()

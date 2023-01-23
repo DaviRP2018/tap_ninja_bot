@@ -10,10 +10,10 @@ DEFAULT_COOLDOWN_BEFORE_ASCENDING = 300  # seconds
 
 
 class Main:
-    def __init__(self, ascension_cooldown, ascend):
+    def __init__(self, ascension_cooldown, ascend_enabled):
         self.ascend_count = 0
         self.ascension_cooldown = ascension_cooldown
-        self.ascend = ascend
+        self.ascend_enabled = ascend_enabled
         self.dc = 0
 
         self.show_configs()
@@ -28,7 +28,7 @@ class Main:
 
     def show_configs(self):
         print("ascension_cooldown:", self.ascension_cooldown)
-        print("ascend:", self.ascend)
+        print("ascend:", self.ascend_enabled)
 
     def get_rgb(self, x: int, y: int) -> List[int]:
         """Get RGB based on position"""
@@ -156,7 +156,7 @@ class Main:
 
         try:
             while True:
-                if self.ascend:
+                if self.ascend_enabled:
                     # Ascend
                     self.ascend()
 
