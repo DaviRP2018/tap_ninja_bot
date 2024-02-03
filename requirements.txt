@@ -1,5 +1,1 @@
-keyboard
-PyAutoGUI
-
-# Dev
 pre-commit
